@@ -42,8 +42,8 @@ The Office Presence Detector is a smart device designed to monitor occupancy in 
 ### Step 1: Hardware Setup
 
 1. Connect the LD2410 radar sensor to the ESP32:
-   - Connect the RX pin of the radar sensor to GPIO 32 of the ESP32.
-   - Connect the TX pin of the radar sensor to GPIO 33 of the ESP32.
+   - Connect the RX pin of the radar sensor to GPIO 33 of the ESP32.
+   - Connect the TX pin of the radar sensor to GPIO 32 of the ESP32.
    - Connect the power and ground pins of the radar sensor to the 3.3V and GND pins of the ESP32 respectively.
   
 Note that you will likely need to change the sensitivity threasholds in the radar to get it to function well in your envronment. 
