@@ -20,8 +20,8 @@ String command;
 uint32_t lastReading = 0;
 bool radarConnected = false;
 
-constexpr char ssid[] = "Johnson";
-constexpr char password[] = "aaaaaaaa";
+constexpr char ssid[] = "<wifi ssid>";
+constexpr char password[] = "<wifi password>";
 constexpr char mqtt_server[] = "192.168.1.32";
 constexpr char WillTopic[] = "$CONNECTED/" CLIENT_ID;
 String stateTopic = "home/office_presence/state";
