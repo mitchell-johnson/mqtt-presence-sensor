@@ -45,6 +45,11 @@ The Office Presence Detector is a smart device designed to monitor occupancy in 
    - Connect the RX pin of the radar sensor to GPIO 32 of the ESP32.
    - Connect the TX pin of the radar sensor to GPIO 33 of the ESP32.
    - Connect the power and ground pins of the radar sensor to the 3.3V and GND pins of the ESP32 respectively.
+  
+Note that you will likely need to change the sensitivity threasholds in the radar to get it to function well in your envronment. 
+Future plans are to have that configurable via MQTT
+
+![image](https://github.com/user-attachments/assets/3f827ae9-2509-46b2-b17b-07bac7e267ce)
 
 ### Step 2: Software Setup
 
