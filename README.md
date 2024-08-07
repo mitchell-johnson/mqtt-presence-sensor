@@ -49,6 +49,23 @@ The Office Presence Detector is a smart device designed to monitor occupancy in 
 Note that you will likely need to change the sensitivity threasholds in the radar to get it to function well in your envronment. 
 Future plans are to have that configurable via MQTT
 
+For my setup in my office I have the settings (readconfig command)
+
+Gate sensitivity
+Gate 0 moving targets: 50 stationary targets: 50
+Gate 1 moving targets: 40 stationary targets: 40
+Gate 2 moving targets: 40 stationary targets: 40
+Gate 3 moving targets: 40 stationary targets: 40
+Gate 4 moving targets: 40 stationary targets: 40
+Gate 5 moving targets: 90 stationary targets: 90
+Gate 6 moving targets: 100 stationary targets: 100
+Gate 7 moving targets: 100 stationary targets: 100
+Gate 8 moving targets: 100 stationary targets: 100
+
+The Gates 0-8 are 75cm thresholds starting immediately in front of the device. 100 == No sensing.
+
+
+
 ![image](https://github.com/user-attachments/assets/3f827ae9-2509-46b2-b17b-07bac7e267ce)
 
 ### Step 2: Software Setup
@@ -91,3 +108,10 @@ Future plans are to have that configurable via MQTT
 1. Ensure your MQTT server is running and accessible.
 2. Autodiscovery should work and it will show up as a device/entity in HA.
 3. For debugging I reccomend MQTT Explorer app.
+
+Finished Product 
+![img_2796 Large](https://github.com/user-attachments/assets/5c997e6c-e718-4904-b837-b9ebf7bfd01d)
+![img_2795 Large](https://github.com/user-attachments/assets/e85794e9-687a-4421-8774-d2fc54b77c84)
+![img_2822 Large](https://github.com/user-attachments/assets/83db2fd9-5380-4779-a72e-d675307ac8f2)
+
+
