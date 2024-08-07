@@ -67,6 +67,7 @@ The Gates 0-8 are 75cm thresholds starting immediately in front of the device. 1
 
 
 ![image](https://github.com/user-attachments/assets/3f827ae9-2509-46b2-b17b-07bac7e267ce)
+Note for my prototype I was using the D32 but for the finished product I went with the S2 Mini Board which has the right pin cofig for direct connection. 
 
 ### Step 2: Software Setup
 
