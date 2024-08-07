@@ -51,16 +51,17 @@ Future plans are to have that configurable via MQTT
 
 For my setup in my office I have the settings (readconfig command)
 
-Gate sensitivity
-Gate 0 moving targets: 50 stationary targets: 50
-Gate 1 moving targets: 40 stationary targets: 40
-Gate 2 moving targets: 40 stationary targets: 40
-Gate 3 moving targets: 40 stationary targets: 40
-Gate 4 moving targets: 40 stationary targets: 40
-Gate 5 moving targets: 90 stationary targets: 90
-Gate 6 moving targets: 100 stationary targets: 100
-Gate 7 moving targets: 100 stationary targets: 100
-Gate 8 moving targets: 100 stationary targets: 100
+| Gate | Moving Targets | Stationary Targets |
+|------|----------------|--------------------|
+| 0    | 50             | 50                 |
+| 1    | 40             | 40                 |
+| 2    | 40             | 40                 |
+| 3    | 40             | 40                 |
+| 4    | 40             | 40                 |
+| 5    | 90             | 90                 |
+| 6    | 100            | 100                |
+| 7    | 100            | 100                |
+| 8    | 100            | 100                |
 
 The Gates 0-8 are 75cm thresholds starting immediately in front of the device. 100 == No sensing.
 
