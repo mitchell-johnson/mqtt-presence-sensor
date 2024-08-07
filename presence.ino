@@ -26,8 +26,6 @@ constexpr char mqtt_server[] = "192.168.1.32";
 constexpr char WillTopic[] = "$CONNECTED/" CLIENT_ID;
 String stateTopic = "home/office_presence/state";
 
-int stillThreshold = 30;
-int movingThreshold = 30;
 bool logReads = false;
 
 // Initializing WiFi and MQTT client
