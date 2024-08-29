@@ -37,7 +37,7 @@ void setupWiFi() {
   Serial.println("Connecting to " + String(ssid));
   WiFi.mode(WIFI_STA);
   WiFi.begin(ssid, password);
-  
+
   while (WiFi.status() != WL_CONNECTED) {
     delay(500);
     Serial.print(".");
@@ -45,14 +45,12 @@ void setupWiFi() {
   Serial.println("\nWiFi connected. IP: " + WiFi.localIP().toString());
 }
 
-void connectMqtt (){
+void connectMqtt() {
   Serial.print("\nconnecting mqtt...");
   while (!client.connected()) {
     client.setWill(WillTopic);
-    digitalWrite(LED_BUILTIN, LOW);
     if (client.connect(CLIENT_ID)) {
       Serial.println("connected");
-      digitalWrite(LED_BUILTIN, HIGH);
       publishAutoDiscoveryConfig();
     } else {
       Serial.print(".");
@@ -64,8 +62,8 @@ void connectMqtt (){
 }
 
 void publishAutoDiscoveryConfig() {
-  const char* baseTopic = "homeassistant/sensor/";
-  String clientId = CLIENT_ID; // Use your actual client ID
+  const char *baseTopic = "homeassistant/sensor/";
+  String clientId = CLIENT_ID;  // Use your actual client ID
 
   // Moving Distance
   {
@@ -171,11 +169,10 @@ void publishAutoDiscoveryConfig() {
 // MQTT callback function to handle incoming messages
 void mqttCallback(String &topic, String &payload) {
   Serial.print("Got MQTT Message...");
-  
 }
 
 void publishSensorData() {
-  String clientId = CLIENT_ID; // Use your actual client ID
+  String clientId = CLIENT_ID;  // Use your actual client ID
   String stateTopic = "home/" + clientId + "/state";
   radar.read();
 
@@ -188,7 +185,7 @@ void publishSensorData() {
 
   //binary sensor to indicate if someone is present or not
   String presence = "OFF";
-  if(radar.presenceDetected()){
+  if (radar.presenceDetected()) {
     presence = "ON";
   }
 
@@ -197,23 +194,22 @@ void publishSensorData() {
 
   String payload;
   serializeJson(stateDoc, payload);
-  if(logReads){
+  if (logReads) {
     Serial.println(F("publishing: "));
     Serial.println(payload.c_str());
   }
   client.publish(stateTopic.c_str(), payload.c_str());
 }
 
-void setup(void)
-{
-  MONITOR_SERIAL.begin(19200); //Feedback over Serial Monitor
-  delay(500); //Give a while for Serial Monitor to wake up
+void setup(void) {
+  MONITOR_SERIAL.begin(19200);  //Feedback over Serial Monitor
+  delay(500);                   //Give a while for Serial Monitor to wake up
   setupWiFi();
   client.begin(mqtt_server, net);
   client.onMessage(mqttCallback);
   //radar.debug(Serial); //Uncomment to show debug information from the library on the Serial Monitor. By default this does not show sensor reads as they are very frequent.
 
-  RADAR_SERIAL.begin(256000, SERIAL_8N1, RADAR_RX_PIN, RADAR_TX_PIN); //UART for monitoring the radar
+  RADAR_SERIAL.begin(256000, SERIAL_8N1, RADAR_RX_PIN, RADAR_TX_PIN);  //UART for monitoring the radar
 
   delay(500);
   MONITOR_SERIAL.print(F("\nConnect LD2410 radar TX to GPIO:"));
@@ -221,8 +217,7 @@ void setup(void)
   MONITOR_SERIAL.print(F("Connect LD2410 radar RX to GPIO:"));
   MONITOR_SERIAL.println(RADAR_TX_PIN);
   MONITOR_SERIAL.print(F("LD2410 radar sensor initialising: "));
-  if(radar.begin(RADAR_SERIAL))
-  {
+  if (radar.begin(RADAR_SERIAL)) {
     MONITOR_SERIAL.println(F("OK"));
     MONITOR_SERIAL.print(F("LD2410 firmware version: "));
     MONITOR_SERIAL.print(radar.firmware_major_version);
@@ -230,67 +225,49 @@ void setup(void)
     MONITOR_SERIAL.print(radar.firmware_minor_version);
     MONITOR_SERIAL.print('.');
     MONITOR_SERIAL.println(radar.firmware_bugfix_version, HEX);
-  }
-  else
-  {
+  } else {
     MONITOR_SERIAL.println(F("not connected"));
   }
   MONITOR_SERIAL.println(F("Supported commands\nread: read current values from the sensor\nreadconfig: read the configuration from the sensor\nsetmaxvalues <motion gate> <stationary gate> <inactivitytimer>\nsetsensitivity <gate> <motionsensitivity> <stationarysensitivity>\nenableengineeringmode: enable engineering mode\ndisableengineeringmode: disable engineering mode\nrestart: restart the sensor\nreadversion: read firmware version\nfactoryreset: factory reset the sensor\n"));
 }
 
-void loop()
-{
-  radar.read(); //Always read frames from the sensor
-  if(MONITOR_SERIAL.available())
-  {
+void loop() {
+  radar.read();  //Always read frames from the sensor
+  if (MONITOR_SERIAL.available()) {
     char typedCharacter = MONITOR_SERIAL.read();
-    if(typedCharacter == '\r' || typedCharacter == '\n')
-    {
+    if (typedCharacter == '\r' || typedCharacter == '\n') {
       command.trim();
-      if(command.equals("logReads"))
-      {
+      if (command.equals("logReads")) {
         command = "";
         logReads = !logReads;
-      } else if(command.equals("read"))
-      {
+      } else if (command.equals("read")) {
         command = "";
         MONITOR_SERIAL.print(F("Reading from sensor: "));
-        if(radar.isConnected())
-        {
+        if (radar.isConnected()) {
           MONITOR_SERIAL.println(F("OK"));
-          if(radar.presenceDetected())
-          {
-            if(radar.stationaryTargetDetected())
-            {
+          if (radar.presenceDetected()) {
+            if (radar.stationaryTargetDetected()) {
               MONITOR_SERIAL.print(F("Stationary target: "));
               MONITOR_SERIAL.print(radar.stationaryTargetDistance());
               MONITOR_SERIAL.print(F("cm energy: "));
               MONITOR_SERIAL.println(radar.stationaryTargetEnergy());
             }
-            if(radar.movingTargetDetected())
-            {
+            if (radar.movingTargetDetected()) {
               MONITOR_SERIAL.print(F("Moving target: "));
               MONITOR_SERIAL.print(radar.movingTargetDistance());
               MONITOR_SERIAL.print(F("cm energy: "));
               MONITOR_SERIAL.println(radar.movingTargetEnergy());
             }
-          }
-          else
-          {
+          } else {
             MONITOR_SERIAL.println(F("nothing detected"));
           }
-        }
-        else
-        {
+        } else {
           MONITOR_SERIAL.println(F("failed to read"));
         }
-      }
-      else if(command.equals("readconfig"))
-      {
+      } else if (command.equals("readconfig")) {
         command = "";
         MONITOR_SERIAL.print(F("Reading configuration from sensor: "));
-        if(radar.requestCurrentConfiguration())
-        {
+        if (radar.requestCurrentConfiguration()) {
           MONITOR_SERIAL.println(F("OK"));
           MONITOR_SERIAL.print(F("Maximum gate ID: "));
           MONITOR_SERIAL.println(radar.max_gate);
@@ -301,8 +278,7 @@ void loop()
           MONITOR_SERIAL.print(F("Idle time for targets: "));
           MONITOR_SERIAL.println(radar.sensor_idle_time);
           MONITOR_SERIAL.println(F("Gate sensitivity"));
-          for(uint8_t gate = 0; gate <= radar.max_gate; gate++)
-          {
+          for (uint8_t gate = 0; gate <= radar.max_gate; gate++) {
             MONITOR_SERIAL.print(F("Gate "));
             MONITOR_SERIAL.print(gate);
             MONITOR_SERIAL.print(F(" moving targets: "));
@@ -310,22 +286,17 @@ void loop()
             MONITOR_SERIAL.print(F(" stationary targets: "));
             MONITOR_SERIAL.println(radar.stationary_sensitivity[gate]);
           }
-        }
-        else
-        {
+        } else {
           MONITOR_SERIAL.println(F("Failed"));
         }
-      }
-      else if(command.startsWith("setmaxvalues"))
-      {
+      } else if (command.startsWith("setmaxvalues")) {
         uint8_t firstSpace = command.indexOf(' ');
-        uint8_t secondSpace = command.indexOf(' ',firstSpace + 1);
-        uint8_t thirdSpace = command.indexOf(' ',secondSpace + 1);
-        uint8_t newMovingMaxDistance = (command.substring(firstSpace,secondSpace)).toInt();
-        uint8_t newStationaryMaxDistance = (command.substring(secondSpace,thirdSpace)).toInt();
-        uint16_t inactivityTimer = (command.substring(thirdSpace,command.length())).toInt();
-        if(newMovingMaxDistance > 0 && newStationaryMaxDistance > 0 && newMovingMaxDistance <= 8 && newStationaryMaxDistance <= 8)
-        {
+        uint8_t secondSpace = command.indexOf(' ', firstSpace + 1);
+        uint8_t thirdSpace = command.indexOf(' ', secondSpace + 1);
+        uint8_t newMovingMaxDistance = (command.substring(firstSpace, secondSpace)).toInt();
+        uint8_t newStationaryMaxDistance = (command.substring(secondSpace, thirdSpace)).toInt();
+        uint16_t inactivityTimer = (command.substring(thirdSpace, command.length())).toInt();
+        if (newMovingMaxDistance > 0 && newStationaryMaxDistance > 0 && newMovingMaxDistance <= 8 && newStationaryMaxDistance <= 8) {
           MONITOR_SERIAL.print(F("Setting max values to gate "));
           MONITOR_SERIAL.print(newMovingMaxDistance);
           MONITOR_SERIAL.print(F(" moving targets, gate "));
@@ -334,17 +305,12 @@ void loop()
           MONITOR_SERIAL.print(inactivityTimer);
           MONITOR_SERIAL.print(F("s inactivity timer: "));
           command = "";
-          if(radar.setMaxValues(newMovingMaxDistance, newStationaryMaxDistance, inactivityTimer))
-          {
+          if (radar.setMaxValues(newMovingMaxDistance, newStationaryMaxDistance, inactivityTimer)) {
             MONITOR_SERIAL.println(F("OK, now restart to apply settings"));
-          }
-          else
-          {
+          } else {
             MONITOR_SERIAL.println(F("failed"));
           }
-        }
-        else
-        {
+        } else {
           MONITOR_SERIAL.print(F("Can't set distances to "));
           MONITOR_SERIAL.print(newMovingMaxDistance);
           MONITOR_SERIAL.print(F(" moving "));
@@ -352,17 +318,14 @@ void loop()
           MONITOR_SERIAL.println(F(" stationary, try again"));
           command = "";
         }
-      }
-      else if(command.startsWith("setsensitivity"))
-      {
+      } else if (command.startsWith("setsensitivity")) {
         uint8_t firstSpace = command.indexOf(' ');
-        uint8_t secondSpace = command.indexOf(' ',firstSpace + 1);
-        uint8_t thirdSpace = command.indexOf(' ',secondSpace + 1);
-        uint8_t gate = (command.substring(firstSpace,secondSpace)).toInt();
-        uint8_t motionSensitivity = (command.substring(secondSpace,thirdSpace)).toInt();
-        uint8_t stationarySensitivity = (command.substring(thirdSpace,command.length())).toInt();
-        if(motionSensitivity >= 0 && stationarySensitivity >= 0 && motionSensitivity <= 100 && stationarySensitivity <= 100)
-        {
+        uint8_t secondSpace = command.indexOf(' ', firstSpace + 1);
+        uint8_t thirdSpace = command.indexOf(' ', secondSpace + 1);
+        uint8_t gate = (command.substring(firstSpace, secondSpace)).toInt();
+        uint8_t motionSensitivity = (command.substring(secondSpace, thirdSpace)).toInt();
+        uint8_t stationarySensitivity = (command.substring(thirdSpace, command.length())).toInt();
+        if (motionSensitivity >= 0 && stationarySensitivity >= 0 && motionSensitivity <= 100 && stationarySensitivity <= 100) {
           MONITOR_SERIAL.print(F("Setting gate "));
           MONITOR_SERIAL.print(gate);
           MONITOR_SERIAL.print(F(" motion sensitivity to "));
@@ -371,17 +334,12 @@ void loop()
           MONITOR_SERIAL.print(stationarySensitivity);
           MONITOR_SERIAL.println(F(": "));
           command = "";
-          if(radar.setGateSensitivityThreshold(gate, motionSensitivity, stationarySensitivity))
-          {
+          if (radar.setGateSensitivityThreshold(gate, motionSensitivity, stationarySensitivity)) {
             MONITOR_SERIAL.println(F("OK, now restart to apply settings"));
-          }
-          else
-          {
+          } else {
             MONITOR_SERIAL.println(F("failed"));
           }
-        }
-        else
-        {
+        } else {
           MONITOR_SERIAL.print(F("Can't set gate "));
           MONITOR_SERIAL.print(gate);
           MONITOR_SERIAL.print(F(" motion sensitivity to "));
@@ -391,99 +349,70 @@ void loop()
           MONITOR_SERIAL.println(F(", try again"));
           command = "";
         }
-      }
-      else if(command.equals("enableengineeringmode"))
-      {
+      } else if (command.equals("enableengineeringmode")) {
         command = "";
         MONITOR_SERIAL.print(F("Enabling engineering mode: "));
-        if(radar.requestStartEngineeringMode())
-        {
+        if (radar.requestStartEngineeringMode()) {
           MONITOR_SERIAL.println(F("OK"));
-        }
-        else
-        {
+        } else {
           MONITOR_SERIAL.println(F("failed"));
         }
-      }
-      else if(command.equals("disableengineeringmode"))
-      {
+      } else if (command.equals("disableengineeringmode")) {
         command = "";
         MONITOR_SERIAL.print(F("Disabling engineering mode: "));
-        if(radar.requestEndEngineeringMode())
-        {
+        if (radar.requestEndEngineeringMode()) {
           MONITOR_SERIAL.println(F("OK"));
-        }
-        else
-        {
+        } else {
           MONITOR_SERIAL.println(F("failed"));
         }
-      }
-      else if(command.equals("restart"))
-      {
+      } else if (command.equals("restart")) {
         command = "";
         MONITOR_SERIAL.print(F("Restarting sensor: "));
-        if(radar.requestRestart())
-        {
+        if (radar.requestRestart()) {
           MONITOR_SERIAL.println(F("OK"));
-        }
-        else
-        {
+        } else {
           MONITOR_SERIAL.println(F("failed"));
         }
-      }
-      else if(command.equals("readversion"))
-      {
+      } else if (command.equals("readversion")) {
         command = "";
         MONITOR_SERIAL.print(F("Requesting firmware version: "));
-        if(radar.requestFirmwareVersion())
-        {
+        if (radar.requestFirmwareVersion()) {
           MONITOR_SERIAL.print('v');
           MONITOR_SERIAL.print(radar.firmware_major_version);
           MONITOR_SERIAL.print('.');
           MONITOR_SERIAL.print(radar.firmware_minor_version);
           MONITOR_SERIAL.print('.');
-          MONITOR_SERIAL.println(radar.firmware_bugfix_version,HEX);
-        }
-        else
-        {
+          MONITOR_SERIAL.println(radar.firmware_bugfix_version, HEX);
+        } else {
           MONITOR_SERIAL.println(F("Failed"));
         }
-      }
-      else if(command.equals("factoryreset"))
-      {
+      } else if (command.equals("factoryreset")) {
         command = "";
         MONITOR_SERIAL.print(F("Factory resetting sensor: "));
-        if(radar.requestFactoryReset())
-        {
+        if (radar.requestFactoryReset()) {
           MONITOR_SERIAL.println(F("OK, now restart sensor to take effect"));
-        }
-        else
-        {
+        } else {
           MONITOR_SERIAL.println(F("failed"));
         }
-      }
-      else
-      {
+      } else {
         MONITOR_SERIAL.print(F("Unknown command: "));
         MONITOR_SERIAL.println(command);
         command = "";
       }
-    }
-    else
-    {
+    } else {
       command += typedCharacter;
     }
   }
 
-  if(radar.isConnected() && millis() - lastReading > 1000)  //Report every 1000ms
+  if (radar.isConnected() && millis() - lastReading > 1000)  //Report every 1000ms
   {
     lastReading = millis();
     publishSensorData();
 
-  if (!client.connected()) {
-    connectMqtt();
+    if (!client.connected()) {
+      connectMqtt();
+    }
+
+    client.loop();
   }
-  
-  client.loop();
-  
 }
